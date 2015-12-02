@@ -5,7 +5,7 @@ android {
         debug {
             keyAlias 'Sky~VIN'
             keyPassword 'Freedom'
-            storeFile file('D:/Programming/Projects/Android/AS/VKInfinity/swan.keystore')
+            storeFile file('/home/daniel/Documents/Projects/VKInfinity/swan.keystore')
             storePassword '002579'
         }
     }

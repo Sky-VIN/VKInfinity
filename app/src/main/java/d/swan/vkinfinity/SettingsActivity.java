@@ -20,7 +20,6 @@ import android.widget.ToggleButton;
 
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
-import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
@@ -28,10 +27,6 @@ import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.model.VKApiUser;
-import com.vk.sdk.api.model.VKList;
-
-import java.util.List;
 
 public class SettingsActivity extends Activity implements OnItemSelectedListener, OnCheckedChangeListener, OnClickListener {
 
@@ -39,14 +34,13 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
     private boolean isLogined = false;
 
     ToggleButton tbOnOf;
-    TextView tvOnOff, tvUser;
+    TextView tvOnOff, tvUser, tvOnline;
     ImageView iwAvatar;
     Button loginBtn;
     Spinner spnrLang;
     LinearLayout infoLayout;
 
     private final static String[] lang = new String[]{"English", "Русский", "Українська"};
-    private static final String[] scope = new String[] { VKScope.PHOTOS, VKScope.STATUS };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +76,7 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
 
         tvOnOff = (TextView) findViewById(R.id.tvOnOff);
         tvUser = (TextView) findViewById(R.id.tvUser);
+        tvOnline = (TextView) findViewById(R.id.tvOnline);
         iwAvatar = (ImageView) findViewById(R.id.iwAvatar);
         infoLayout = (LinearLayout) findViewById(R.id.infoLayout);
 
@@ -103,48 +98,37 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
     private void showLogined() {
         isLogined = true;
         loginBtn.setText("Log Out");
-        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "first_name, last_name, status"));
+        VKRequest setOnline = new VKRequest("account.setOffline");
+        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "first_name, last_name, online, photo_100"));
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
 
+                ParseJSON parseJSON  = new ParseJSON();
 
-                VKList vkList = (VKList) response.parsedModel;
-                tvUser.setText("");
-                for(Object s : vkList)
-                    tvUser.append(s.toString() + " ");
+                tvUser.setText(parseJSON.getInfo(response, "first_name") + " " + parseJSON.getInfo(response, "last_name"));
+
+                if(parseJSON.getInfo(response, "online").equals("0"))
+                    tvOnline.setText("Offline");
+                else
+                    tvOnline.setText("Online");
+
+                new ImageFromURL(iwAvatar).execute(parseJSON.getInfo(response, "photo_100"));
+
             }
         });
     }
 
     private void showLogouted() {
         isLogined = false;
+        iwAvatar.setImageResource(R.drawable.user);
+        tvUser.setText("");
+        tvOnline.setText("");
         loginBtn.setText("Log In");
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isResumed = true;
-        if (VKSdk.isLoggedIn()) {
-            showLogined();
-        } else {
-            showLogouted();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        isResumed = false;
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
+    // Выбор языка
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
@@ -173,6 +157,8 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
             infoLayout.setVisibility(View.INVISIBLE);
     }
 
+
+    // Надатие на кнопку логина
     @Override
     public void onClick(View v) {
         if(isLogined) {
@@ -180,9 +166,10 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
             showLogouted();
         }
         else
-            VKSdk.login(this, scope);
+            VKSdk.login(this, null);
     }
 
+    // Обработка входа
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
@@ -202,4 +189,30 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    // -------------------------------------------------- || --------------------------------------------------
+    // -------------------------------------------------- || --------------------------------------------------
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isResumed = true;
+        if (VKSdk.isLoggedIn()) {
+            showLogined();
+        } else {
+            showLogouted();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        isResumed = false;
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
 }

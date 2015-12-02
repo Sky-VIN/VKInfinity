@@ -49,25 +49,34 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:id="@+id/iwAvatar"
                 android:scaleType="fitCenter"
-                android:background="#cfd8dc"
-                android:src="@drawable/user" />
+                android:src="@drawable/user"
+                android:layout_gravity="center" />
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:layout_margin="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvUser"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="5dp" />
+                    android:layout_gravity="center_vertical"
+                    android:textStyle="bold"
+                    android:textSize="14dp"
+                    android:text="Daniel Swan" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvOnline"
+                    android:textSize="10dp" />
 
             </LinearLayout>
 
@@ -95,6 +104,7 @@
                 android:spinnerMode="dialog"
                 android:longClickable="false" />
         </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
