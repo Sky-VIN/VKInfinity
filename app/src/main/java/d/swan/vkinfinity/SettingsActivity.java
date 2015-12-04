@@ -1,19 +1,19 @@
 package d.swan.vkinfinity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -28,145 +28,203 @@ import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
-public class SettingsActivity extends Activity implements OnItemSelectedListener, OnCheckedChangeListener, OnClickListener {
+import java.util.Locale;
+
+public class SettingsActivity extends Activity implements OnCheckedChangeListener, OnClickListener {
 
     private boolean isResumed = false;
-    private boolean isLogined = false;
+    private boolean isEnabled = true;
+    private Properties properties = new Properties();
+    private Configuration config = new Configuration();
 
-    ToggleButton tbOnOf;
-    TextView tvOnOff, tvUser, tvOnline;
-    ImageView iwAvatar;
     Button loginBtn;
-    Spinner spnrLang;
-    LinearLayout infoLayout;
-
-    private final static String[] lang = new String[]{"English", "Русский", "Українська"};
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-
-        VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
-            @Override
-            public void onResult(VKSdk.LoginState res) {
-                if (isResumed) {
-                    switch (res) {
-                        case LoggedOut:
-                            showLogouted();
-                            break;
-                        case LoggedIn:
-                            showLogined();
-                            break;
-                        case Pending:
-                            break;
-                        case Unknown:
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void onError(VKError error) {
-
-            }
-        });
+    ToggleButton tbOnOf;
+    ImageView iwAvatar, iwLang;
+    TextView tvUser, tvStatus, tvOnline;
+    LinearLayout infoLayout, langLayout, userLayout;
 
 
-
-        tvOnOff = (TextView) findViewById(R.id.tvOnOff);
+    private void Assignment() {
         tvUser = (TextView) findViewById(R.id.tvUser);
-        tvOnline = (TextView) findViewById(R.id.tvOnline);
         iwAvatar = (ImageView) findViewById(R.id.iwAvatar);
-        infoLayout = (LinearLayout) findViewById(R.id.infoLayout);
+        tvStatus = (TextView) findViewById(R.id.tvStatus);
+        tvOnline = (TextView) findViewById(R.id.tvOnline);
 
         loginBtn = (Button) findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(this);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, lang);
-        spnrLang = (Spinner) findViewById(R.id.spnrLang);
-        spnrLang.setAdapter(adapter);
-        spnrLang.setPrompt("Language");
-        spnrLang.setSelection(0);
-        spnrLang.setOnItemSelectedListener(this);
-
-
+        // On/Off Toggle + User Info Layout
+        infoLayout = (LinearLayout) findViewById(R.id.infoLayout);
         tbOnOf = (ToggleButton) findViewById(R.id.tbOnOff);
         tbOnOf.setOnCheckedChangeListener(this);
+        tbOnOf.setChecked(isEnabled);
+
+        if(isEnabled)
+            infoLayout.setVisibility(View.VISIBLE);
+        else
+            infoLayout.setVisibility(View.INVISIBLE);
+
+        userLayout = (LinearLayout) findViewById(R.id.userLayout);
+
+        if (VKSdk.isLoggedIn())
+            userLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        else
+            userLayout.setLayoutParams(new LinearLayout.LayoutParams(0,0));
+
+
+        // Language
+        langLayout = (LinearLayout) findViewById(R.id.langLayout);
+        langLayout.setOnClickListener(this);
+        iwLang = (ImageView) findViewById(R.id.iwLang);
+        iwLang.setImageResource(R.drawable.flag);
     }
 
-    private void showLogined() {
-        isLogined = true;
-        loginBtn.setText("Log Out");
-        VKRequest setOnline = new VKRequest("account.setOffline");
-        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "first_name, last_name, online, photo_100"));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isResumed = true;
+        if(isEnabled) {
+            if(VKSdk.isLoggedIn())
+                showLoggedIn();
+            else
+                showLoggedOut();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        properties.SaveData(this, tbOnOf.isChecked(), Locale.getDefault().toString());
+        isResumed = false;
+        super.onPause();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        properties.LoadData(this);
+        isEnabled = properties.isEnabled;
+
+        config.locale = new Locale(properties.locale);
+        Locale.setDefault(config.locale);
+        getResources().updateConfiguration(config, null);
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
+        Assignment();
+
+        if(isEnabled) {
+            VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
+                @Override
+                public void onResult(VKSdk.LoginState res) {
+                    if (isResumed) {
+                        switch (res) {
+                            case LoggedOut:
+                                showLoggedOut();
+                                break;
+                            case LoggedIn:
+                                showLoggedIn();
+                                break;
+                        }
+                    }
+                }
+
+                @Override
+                public void onError(VKError error) {
+                    // nothing
+                }
+            });
+        }
+    }
+
+    private void showLoggedIn() {
+        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "first_name, last_name, online, status, photo_200"));
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
 
-                ParseJSON parseJSON  = new ParseJSON();
+                loginBtn.setText(R.string.loginBtnLogout);
+                userLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                ParseJSON parseJSON = new ParseJSON();
 
                 tvUser.setText(parseJSON.getInfo(response, "first_name") + " " + parseJSON.getInfo(response, "last_name"));
+                tvStatus.setText(parseJSON.getInfo(response, "status"));
 
-                if(parseJSON.getInfo(response, "online").equals("0"))
+                if (parseJSON.getInfo(response, "online").equals("0"))
                     tvOnline.setText("Offline");
                 else
                     tvOnline.setText("Online");
 
-                new ImageFromURL(iwAvatar).execute(parseJSON.getInfo(response, "photo_100"));
-
+                new ImageFromURL(iwAvatar).execute(parseJSON.getInfo(response, "photo_200"));
             }
         });
     }
 
-    private void showLogouted() {
-        isLogined = false;
-        iwAvatar.setImageResource(R.drawable.user);
-        tvUser.setText("");
-        tvOnline.setText("");
-        loginBtn.setText("Log In");
-    }
-
-    // Выбор языка
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (position) {
-            case 0:
-                Toast.makeText(this, lang[position], Toast.LENGTH_SHORT).show();
-                break;
-            case 1:
-                Toast.makeText(this, lang[position], Toast.LENGTH_SHORT).show();
-                break;
-            case 2:
-                Toast.makeText(this, lang[position], Toast.LENGTH_SHORT).show();
-                break;
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        //nothing
+    private void showLoggedOut() {
+        userLayout.setLayoutParams(new LinearLayout.LayoutParams(0,0));
+        loginBtn.setText(R.string.loginBtnLogin);
     }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if(isChecked)
+        if(isChecked) {
+            if(VKSdk.isLoggedIn())
+                showLoggedIn();
             infoLayout.setVisibility(View.VISIBLE);
-        else
+            startService(new Intent(this, Service.class));
+        }
+        else {
             infoLayout.setVisibility(View.INVISIBLE);
+            stopService(new Intent(this, Service.class));
+        }
     }
 
-
-    // Надатие на кнопку логина
+    // обработка кнопок
     @Override
     public void onClick(View v) {
-        if(isLogined) {
-            VKSdk.logout();
-            showLogouted();
+        switch (v.getId()) {
+            // Нажатие на кнопку логина
+            case R.id.loginBtn:
+                if (VKSdk.isLoggedIn()) {
+                    VKSdk.logout();
+                    showLoggedOut();
+                } else
+                    VKSdk.login(this, null);
+                break;
+            // Нажатие на кнопку языка (на поле langLayout)
+            case R.id.langLayout:
+                ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, getResources().getTextArray(R.array.languages));
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.lang)
+                        .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0:
+                                        config.locale = new Locale("en");
+                                        break;
+                                    case 1:
+                                        config.locale = new Locale("ru");
+                                        break;
+                                    case 2:
+                                        config.locale = new Locale("uk");
+                                        break;
+                                }
+                                Locale.setDefault(config.locale);
+                                dialog.dismiss();
+                                properties.SaveData(SettingsActivity.this, tbOnOf.isChecked(), Locale.getDefault().toString());
+                                SettingsActivity.super.recreate();
+                            }
+                        })
+                        .setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+                break;
         }
-        else
-            VKSdk.login(this, null);
     }
 
     // Обработка входа
@@ -175,13 +233,13 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
         VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                showLogined();
+                showLoggedIn();
             }
 
             @Override
             public void onError(VKError error) {
                 // User didn't pass Authorization
-                Toast.makeText(getApplicationContext(), "User didn't pass Authorization", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.AuthErr, Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -189,30 +247,4 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-    // -------------------------------------------------- || --------------------------------------------------
-    // -------------------------------------------------- || --------------------------------------------------
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isResumed = true;
-        if (VKSdk.isLoggedIn()) {
-            showLogined();
-        } else {
-            showLogouted();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        isResumed = false;
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
 }

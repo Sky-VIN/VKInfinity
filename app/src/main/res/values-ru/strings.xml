@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">VK Infinity</string>
+    <integer name="com_vk_sdk_AppId">5168206</integer>
+
+    <drawable name="flag">@drawable/ru</drawable>
+    <string name="lang">Язык</string>
+    <string name="Cancel">Отмена</string>
+
+    <string name="tbOn">ВКЛ</string>
+    <string name="tbOff">ВЫКЛ</string>
+    <string name="tvOnOff">Включить / Выключить службу</string>
+    <string name="loginBtnLogin">Войти</string>
+    <string name="loginBtnLogout">Выйти</string>
+
+    <string name="AuthErr">Пользователь не прошел авторизацию</string>
+</resources>
