@@ -12,5 +12,9 @@
     <string name="loginBtnLogin">Log In</string>
     <string name="loginBtnLogout">Log Out</string>
 
+    <string name="Network">No Internet connection</string>
     <string name="AuthErr">User didn\'t pass Authorization</string>
+
+    <string name="ServiceStarted">VK Infinity: Service started</string>
+    <string name="ServiceStopped">VK Infinity: Service stopped</string>
 </resources>

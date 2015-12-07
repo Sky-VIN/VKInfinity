@@ -18,7 +18,7 @@
             android:textOff="@string/tbOff"
             android:textOn="@string/tbOn"
             android:text="@string/tbOn"
-            android:checked="true"
+            android:checked="false"
             android:layout_gravity="center_vertical"
             android:enabled="true" />
 
@@ -74,42 +74,39 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
                     android:id="@+id/iwAvatar"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
-                    android:background="#e0e0e0" />
+                    android:background="#eeeeee" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvOnline"
-                    android:layout_gravity="center"
-                    android:text="&lt; status >" />
+                    android:layout_gravity="center" />
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_margin="5dp">
+                android:layout_marginLeft="5dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvUser"
                     android:layout_gravity="center_vertical"
                     android:textStyle="bold"
-                    android:textSize="18dp"
-                    android:text="&lt;user name >" />
+                    android:textSize="18dp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvStatus"
-                    android:text="&lt;user status >" />
+                    android:id="@+id/tvStatus" />
 
             </LinearLayout>
 

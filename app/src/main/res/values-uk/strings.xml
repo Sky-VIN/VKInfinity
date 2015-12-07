@@ -12,5 +12,9 @@
     <string name="loginBtnLogin">Увійти</string>
     <string name="loginBtnLogout">Вийти</string>
 
+    <string name="Network">Відсутнє Інтернет з\'єднання</string>
     <string name="AuthErr">Користувач не пройшов авторизацію</string>
+
+    <string name="ServiceStarted">VK Infinity: Сервис запущено</string>
+    <string name="ServiceStopped">VK Infinity: Сервис зупинено</string>
 </resources>
