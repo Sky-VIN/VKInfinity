@@ -12,15 +12,13 @@ public class Properties {
     public void LoadData(Context context) {
         SharedPreferences sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         isEnabled = sPref.getBoolean("Enabled", isEnabled);
-        isLoggedIn = sPref.getBoolean("LoggedIn", isLoggedIn);
         locale = sPref.getString("Locale", locale);
     }
 
-    public void SaveData(Context context, boolean isEnabled, boolean isLoggedIn, String locale) {
+    public void SaveData(Context context, boolean isEnabled, String locale) {
         SharedPreferences sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
         editor.putBoolean("Enabled", isEnabled);
-        editor.putBoolean("LoggedIn", isLoggedIn);
         editor.putString("Locale", locale);
         editor.apply();
     }

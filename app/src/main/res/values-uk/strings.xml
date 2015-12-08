@@ -15,6 +15,10 @@
     <string name="Network">Відсутнє Інтернет з\'єднання</string>
     <string name="AuthErr">Користувач не пройшов авторизацію</string>
 
-    <string name="ServiceStarted">VK Infinity: Сервис запущено</string>
-    <string name="ServiceStopped">VK Infinity: Сервис зупинено</string>
+    <string name="Connected">VKI: З\'єднано як&#160;</string>
+
+    <string name="AppWarning">Офіційна програма ВК не встановлена. Для коректної роботи, необхідно встановити її.\nПерейті до сторінки завантаження?</string>
+    <string name="Yes">Так</string>
+    <string name="Try">Спробувати</string>
+
 </resources>

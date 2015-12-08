@@ -15,6 +15,9 @@
     <string name="Network">No Internet connection</string>
     <string name="AuthErr">User didn\'t pass Authorization</string>
 
-    <string name="ServiceStarted">VK Infinity: Service started</string>
-    <string name="ServiceStopped">VK Infinity: Service stopped</string>
+    <string name="Connected">VKI: Connected as&#160;</string>
+
+    <string name="AppWarning">Official VK application is not installed. For correct work, you need to install it.\nGo to the download page?</string>
+    <string name="Yes">Yes</string>
+    <string name="Try">Try</string>
 </resources>

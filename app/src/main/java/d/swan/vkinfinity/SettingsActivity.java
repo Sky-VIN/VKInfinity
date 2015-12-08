@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -34,7 +36,6 @@ import java.util.Locale;
 public class SettingsActivity extends Activity implements OnCheckedChangeListener, OnClickListener {
 
     private boolean isEnabled = false;
-    private boolean isLoggedIn = false;
     private boolean serviceState = false;
     private Properties properties = new Properties();
     private Configuration config = new Configuration();
@@ -53,14 +54,15 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
     @Override
     protected void onPause() {
         // Сохранение параметров
-        properties.SaveData(this, tbOnOf.isChecked(), isLoggedIn, Locale.getDefault().toString());
+        properties.SaveData(this, tbOnOf.isChecked(), Locale.getDefault().toString());
         super.onPause();
     }
+
 
     @Override
     public void onBackPressed() {
         // Сохранение параметров
-        properties.SaveData(this, tbOnOf.isChecked(), isLoggedIn, Locale.getDefault().toString());
+        properties.SaveData(this, tbOnOf.isChecked(), Locale.getDefault().toString());
         super.onBackPressed();
         System.exit(0);
     }
@@ -95,15 +97,40 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d("VKI", " ");
-        Log.d("VKI", "- - - - - - - - - - - - - - - - - - - - - - - - -");
-
         // Загрузка параметров
         properties.LoadData(this);
         isEnabled = properties.isEnabled;
         config.locale = new Locale(properties.locale);
         Locale.setDefault(config.locale);
         getResources().updateConfiguration(config, null);
+
+        // Проверка установлено ли офф приложение ВК.
+        final String app = "com.vkontakte.android";
+        PackageManager pManager = getPackageManager();
+        try {
+            PackageInfo pInfo = pManager.getPackageInfo(app, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            new AlertDialog.Builder(this)
+                    .setTitle("VK Infinity")
+                    .setMessage(R.string.AppWarning)
+                    .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + app)));
+                            } catch (android.content.ActivityNotFoundException anfe) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + app)));
+                            }
+                        }
+                    })
+                    .setNegativeButton(R.string.Try, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
@@ -116,21 +143,17 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
                 switch (res) {
                     //Если вход не был выполнен
                     case LoggedOut:
-                        Log.d("VKI", "If LoggedOut in Wakeup");
                         showLoggedOut();
                         break;
                     // Если вход был выполнен
                     case LoggedIn:
-                        Log.d("VKI", "If LoggedIn in Wakeup");
                         showLoggedIn();
                         break;
                     case Unknown:
-                        Log.d("VKI", "If Unknown in Wakeup");
                         VKSdk.logout();
                         showLoggedOut();
                         break;
                     case Pending:
-                        Log.d("VKI", "If Pending in Wakeup");
                         showLoggedIn();
                         break;
                 }
@@ -146,15 +169,12 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 
     // Если вход был выполнен
     private void showLoggedIn() {
-        isLoggedIn = true;
-        properties.SaveData(this, isEnabled, isLoggedIn, Locale.getDefault().toString());
 
         // Смена кнопки
         loginBtn.setText(R.string.loginBtnLogout);
 
 
         if(isEnabled && !serviceState) {
-            Log.d("VKI", "START service in showLoggedIn");
             startService(new Intent("d.swan.vkinfinity.Service"));
             serviceState = true;
         }
@@ -196,15 +216,13 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 
     // Если вход не был выполнен
     private void showLoggedOut() {
-        isLoggedIn = false;
         isEnabled = false;
-        properties.SaveData(this, isEnabled, isLoggedIn, Locale.getDefault().toString());
+        properties.SaveData(this, isEnabled, Locale.getDefault().toString());
         userLayout.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         loginBtn.setText(R.string.loginBtnLogin);
         tbOnOf.setChecked(false);
 
         if(serviceState) {
-            Log.d("VKI", "STOP service in showLoggedOut");
             stopService(new Intent("d.swan.vkinfinity.Service"));
             serviceState = false;
         }
@@ -221,7 +239,6 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
                 showLoggedOut();
         }
         else if(serviceState) {
-            Log.d("VKI", "STOP service in tbOnOff");
             stopService(new Intent("d.swan.vkinfinity.Service"));
             serviceState = false;
         }
@@ -265,7 +282,7 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
                                 }
                                 Locale.setDefault(config.locale);
                                 dialog.dismiss();
-                                properties.SaveData(SettingsActivity.this, tbOnOf.isChecked(), isLoggedIn, Locale.getDefault().toString());
+                                properties.SaveData(SettingsActivity.this, tbOnOf.isChecked(), Locale.getDefault().toString());
                                 SettingsActivity.super.recreate();
                             }
                         })
