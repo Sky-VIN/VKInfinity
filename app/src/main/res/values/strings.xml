@@ -6,9 +6,9 @@
     <string name="lang">Language</string>
     <string name="Cancel">Cancel</string>
 
-    <string name="tbOn">ON</string>
-    <string name="tbOff">OFF</string>
-    <string name="tvOnOff">Enable / Disable Service</string>
+    <string name="switchOn">ON</string>
+    <string name="switchOff">OFF</string>
+    <string name="serviceText">Service</string>
     <string name="loginBtnLogin">Log In</string>
     <string name="loginBtnLogout">Log Out</string>
 

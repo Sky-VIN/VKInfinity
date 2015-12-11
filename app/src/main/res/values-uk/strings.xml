@@ -6,9 +6,9 @@
     <string name="lang">Мова</string>
     <string name="Cancel">Відміна</string>
 
-    <string name="tbOn">ВКЛ</string>
-    <string name="tbOff">ВИКЛ</string>
-    <string name="tvOnOff">Увімкнути / Вимкнути службу</string>
+    <string name="switchOn">ВКЛ</string>
+    <string name="switchOff">ВИКЛ</string>
+    <string name="serviceText">Служба</string>
     <string name="loginBtnLogin">Увійти</string>
     <string name="loginBtnLogout">Вийти</string>
 

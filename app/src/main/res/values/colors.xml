@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="back">#437DB2</color>
+    <color name="text">#92B2CD</color>
+
+    <color name="loginButton">#6492BD</color>
+    <color name="loginText">#F7F9FB</color>
+
+    <color name="logoutButton">#E3F0FC</color>
+    <color name="logoutText">#3D678C</color>
+
+
 </resources>

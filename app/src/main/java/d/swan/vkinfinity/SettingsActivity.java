@@ -9,17 +9,18 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -41,10 +42,10 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
     private Configuration config = new Configuration();
 
     Button loginBtn;
-    ToggleButton tbOnOf;
-    ImageView iwAvatar, iwLang;
+    Switch swOnOff;
+    ImageView iwAvatar;
     TextView tvUser, tvStatus, tvOnline;
-    LinearLayout langLayout, userLayout;
+    LinearLayout userLayout;
 
     private void noNetwork() {
         userLayout.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
@@ -54,7 +55,7 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
     @Override
     protected void onPause() {
         // Сохранение параметров
-        properties.SaveData(this, tbOnOf.isChecked(), Locale.getDefault().toString());
+        properties.SaveData(this, swOnOff.isChecked(), Locale.getDefault().toString());
         super.onPause();
     }
 
@@ -62,7 +63,7 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
     @Override
     public void onBackPressed() {
         // Сохранение параметров
-        properties.SaveData(this, tbOnOf.isChecked(), Locale.getDefault().toString());
+        properties.SaveData(this, swOnOff.isChecked(), Locale.getDefault().toString());
         super.onBackPressed();
         System.exit(0);
     }
@@ -80,18 +81,13 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
         loginBtn.setOnClickListener(this);
 
         // Определения тумблера сервиса
-        tbOnOf = (ToggleButton) findViewById(R.id.tbOnOff);
-        tbOnOf.setChecked(isEnabled);
-        tbOnOf.setOnCheckedChangeListener(this);
+        swOnOff = (Switch) findViewById(R.id.swOnOff);
+        swOnOff.setChecked(isEnabled);
+        swOnOff.setOnCheckedChangeListener(this);
 
         // Определение полей
         userLayout = (LinearLayout) findViewById(R.id.userLayout);
 
-        // Определение иконки и поля языка
-        langLayout = (LinearLayout) findViewById(R.id.langLayout);
-        langLayout.setOnClickListener(this);
-        iwLang = (ImageView) findViewById(R.id.iwLang);
-        iwLang.setImageResource(R.drawable.flag);
     }
 
     @Override
@@ -167,11 +163,42 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.en:
+                setLanguage(new Locale("en"));
+                return true;
+            case R.id.ru:
+                setLanguage(new Locale("ru"));
+                return true;
+            case R.id.ua:
+                setLanguage(new Locale("uk"));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void setLanguage(Locale locale) {
+        Locale.setDefault(locale);
+        properties.SaveData(SettingsActivity.this, swOnOff.isChecked(), Locale.getDefault().toString());
+        this.recreate();
+    }
+
     // Если вход был выполнен
     private void showLoggedIn() {
 
         // Смена кнопки
         loginBtn.setText(R.string.loginBtnLogout);
+        loginBtn.setBackgroundColor(getResources().getColor(R.color.logoutButton));
+        loginBtn.setTextColor(getResources().getColor(R.color.logoutText));
 
 
         if(isEnabled && !serviceState) {
@@ -216,11 +243,12 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 
     // Если вход не был выполнен
     private void showLoggedOut() {
-        isEnabled = false;
-        properties.SaveData(this, isEnabled, Locale.getDefault().toString());
         userLayout.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+        swOnOff.setChecked(false);
+
         loginBtn.setText(R.string.loginBtnLogin);
-        tbOnOf.setChecked(false);
+        loginBtn.setBackgroundColor(getResources().getColor(R.color.loginButton));
+        loginBtn.setTextColor(getResources().getColor(R.color.loginText));
 
         if(serviceState) {
             stopService(new Intent("d.swan.vkinfinity.Service"));
@@ -232,11 +260,14 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
-            isEnabled = true;
             if(VKSdk.isLoggedIn())
                 showLoggedIn();
-            else
+            else {
+                swOnOff.setChecked(false);
                 showLoggedOut();
+            }
+
+            properties.SaveData(this, true, Locale.getDefault().toString());
         }
         else if(serviceState) {
             stopService(new Intent("d.swan.vkinfinity.Service"));
@@ -247,54 +278,15 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
     // обработка кнопок
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            // Нажатие на кнопку логина
-            case R.id.loginBtn:
-                if(new Network().check(this)) {
-                    if(VKSdk.isLoggedIn()) {
-                        VKSdk.logout();
-                        showLoggedOut();
-                    }
-                    else
-                        VKSdk.login(this, null);
-                } else
-                    noNetwork();
-                break;
-
-            // Нажатие на кнопку языка (на поле langLayout)
-            case R.id.langLayout:
-                ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, getResources().getTextArray(R.array.languages));
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.lang)
-                        .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case 0:
-                                        config.locale = new Locale("en");
-                                        break;
-                                    case 1:
-                                        config.locale = new Locale("ru");
-                                        break;
-                                    case 2:
-                                        config.locale = new Locale("uk");
-                                        break;
-                                }
-                                Locale.setDefault(config.locale);
-                                dialog.dismiss();
-                                properties.SaveData(SettingsActivity.this, tbOnOf.isChecked(), Locale.getDefault().toString());
-                                SettingsActivity.super.recreate();
-                            }
-                        })
-                        .setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .show();
-                break;
-        }
+        if(new Network().check(this)) {
+            if(VKSdk.isLoggedIn()) {
+                VKSdk.logout();
+                showLoggedOut();
+            }
+            else
+                VKSdk.login(this, null);
+        } else
+            noNetwork();
     }
 
     // Обработка результата попытки входа
