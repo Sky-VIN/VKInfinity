@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="back">#437DB2</color>
-    <color name="text">#92B2CD</color>
 
-    <color name="loginButton">#6492BD</color>
-    <color name="loginText">#F7F9FB</color>
-
-    <color name="logoutButton">#E3F0FC</color>
-    <color name="logoutText">#3D678C</color>
-
+    <color name="background">#D9D9D9</color>
+    <color name="title">#5183B7</color>
+    <color name="mainText">#2e3033</color>
+    <color name="text">#ABABAB</color>
 
 </resources>

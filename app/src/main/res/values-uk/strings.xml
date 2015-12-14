@@ -1,16 +1,20 @@
 <resources>
+
     <string name="app_name">VK Infinity</string>
     <integer name="com_vk_sdk_AppId">5168206</integer>
 
     <drawable name="flag">@drawable/ua</drawable>
-    <string name="lang">Мова</string>
     <string name="Cancel">Відміна</string>
 
-    <string name="switchOn">ВКЛ</string>
-    <string name="switchOff">ВИКЛ</string>
-    <string name="serviceText">Служба</string>
-    <string name="loginBtnLogin">Увійти</string>
-    <string name="loginBtnLogout">Вийти</string>
+    <string name="settingsText">Налаштування</string>
+    <string name="serviceText">Сервіс</string>
+    <string name="langText">Мова</string>
+
+    <string name="helpText">Допомога</string>
+    <string name="aboutText">Про програму</string>
+
+    <string name="loginBtnLogin">АВТОРИЗАЦІЯ</string>
+    <string name="loginBtnLogout">ВИЙТИ</string>
 
     <string name="Network">Відсутнє Інтернет з\'єднання</string>
     <string name="AuthErr">Користувач не пройшов авторизацію</string>
@@ -21,4 +25,7 @@
     <string name="Yes">Так</string>
     <string name="Try">Спробувати</string>
 
+    <string name="aboutMessage">Програма для підтримки статусу онлайн вконтакте, якщо є Інтернет з\'єднання на вашому пристрої.</string>
+
 </resources>
+

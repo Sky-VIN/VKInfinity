@@ -6,8 +6,8 @@ import android.content.SharedPreferences;
 public class Properties {
     private static final String PREF_NAME = "Properties";
     protected boolean isEnabled = true;
-    protected boolean isLoggedIn = false;
     protected String locale = "en";
+
 
     public void LoadData(Context context) {
         SharedPreferences sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -22,5 +22,4 @@ public class Properties {
         editor.putString("Locale", locale);
         editor.apply();
     }
-
 }

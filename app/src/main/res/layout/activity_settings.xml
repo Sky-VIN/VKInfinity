@@ -2,107 +2,60 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
-    android:background="@color/back">
+    android:background="@color/background">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Switch
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/serviceText"
-            android:id="@+id/swOnOff"
-            android:textStyle="bold"
-            android:singleLine="true"
-            android:textOff="@string/switchOff"
-            android:textOn="@string/switchOn" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp" />
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/infoLayout"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:id="@+id/userLayout"
+        android:background="@android:color/background_light">
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/userLayout">
+            android:layout_margin="10dp">
 
-            <LinearLayout
-                android:orientation="vertical"
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:id="@+id/iwAvatar"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:background="#eeeeee" />
+
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:id="@+id/iwAvatar"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:background="#eeeeee" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvOnline"
-                    android:layout_gravity="center" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginLeft="5dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvUser"
-                    android:layout_gravity="center_vertical"
-                    android:textStyle="bold"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvStatus" />
-
-            </LinearLayout>
-
+                android:layout_height="wrap_content"
+                android:id="@+id/tvOnline"
+                android:layout_gravity="center"
+                android:textColor="@color/mainText"
+                android:layout_margin="5dp" />
         </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="10dp">
 
-            <Button
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/loginBtnLogin"
-                android:id="@+id/loginBtn"
-                android:textColor="@color/loginText"
-                android:minWidth="150dp"
-                android:background="@color/loginButton"
-                android:minHeight="38dp"
-                android:layout_gravity="right"
+                android:id="@+id/tvUser"
+                android:layout_gravity="center_vertical"
                 android:textStyle="bold"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp" />
+                android:textColor="@color/mainText"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvStatus"
+                android:textColor="@color/text" />
+
         </LinearLayout>
 
     </LinearLayout>
@@ -110,15 +63,168 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/buttons"
+        android:id="@+id/loginLayout">
 
-        <ImageView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/iwLogo"
-            android:layout_gravity="center"
-            android:src="@drawable/logo" />
+            android:text="@string/loginBtnLogin"
+            android:id="@+id/loginText"
+            android:textColor="@color/title"
+            android:textStyle="bold"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settingsLayout"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/background_light">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settingsText"
+            android:id="@+id/settingsText"
+            android:textColor="@color/title"
+            android:textStyle="bold"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/serviceLayout"
+            android:background="@drawable/buttons">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:id="@+id/serviceImage"
+                android:src="@drawable/service"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginRight="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/serviceText"
+                android:id="@+id/serviceText"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:textColor="@color/mainText" />
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/iwOnOff"
+                android:src="@drawable/switch_off"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/langLayout"
+            android:background="@drawable/buttons">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:id="@+id/languageImage"
+                android:src="@drawable/language"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/langText"
+                android:id="@+id/langText"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:textColor="@color/mainText" />
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:id="@+id/iwLang"
+                android:src="@drawable/en"
+                android:layout_marginRight="15dp"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:id="@+id/helpLayout"
+        android:background="@android:color/background_light">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/helpText"
+            android:id="@+id/helpText"
+            android:textColor="@color/title"
+            android:textStyle="bold"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/aboutLayout"
+            android:background="@drawable/buttons" >
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:id="@+id/aboutImage"
+                android:src="@drawable/about"
+                android:layout_marginLeft="25dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginRight="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/aboutText"
+                android:id="@+id/aboutText"
+                android:layout_gravity="center"
+                android:textColor="@color/mainText" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
