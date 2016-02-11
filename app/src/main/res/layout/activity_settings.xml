@@ -17,44 +17,49 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp">
 
-            <ImageView
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:id="@+id/iwAvatar"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:background="#eeeeee" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvOnline"
-                android:layout_gravity="center"
-                android:textColor="@color/mainText"
-                android:layout_margin="5dp" />
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:id="@+id/iwAvatar"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:background="@color/background" />
+
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:id="@+id/iwCircle"
+                    android:src="@drawable/circle" />
+            </FrameLayout>
+
         </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="10dp">
+            android:layout_margin="10dp"
+            android:layout_gravity="center">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvUser"
-                android:layout_gravity="center_vertical"
                 android:textStyle="bold"
-                android:textColor="@color/mainText"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textColor="@color/mainText" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvStatus"
-                android:textColor="@color/text" />
+                android:id="@+id/tvOnline"
+                android:textColor="@color/text"
+                android:layout_marginTop="5dp"
+                android:textSize="12dp" />
 
         </LinearLayout>
 
@@ -116,7 +121,7 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
-                android:layout_marginRight="15dp" />
+                android:layout_marginRight="30dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -153,7 +158,7 @@
                 android:scaleType="fitCenter"
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginRight="15dp"
+                android:layout_marginRight="30dp"
                 android:layout_marginBottom="15dp" />
 
             <TextView
@@ -170,7 +175,7 @@
                 android:layout_height="32dp"
                 android:id="@+id/iwLang"
                 android:src="@drawable/en"
-                android:layout_marginRight="15dp"
+                android:layout_marginRight="20dp"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center" />
 
@@ -214,7 +219,7 @@
                 android:scaleType="fitCenter"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
-                android:layout_marginRight="15dp" />
+                android:layout_marginRight="30dp" />
 
             <TextView
                 android:layout_width="wrap_content"

@@ -1,5 +1,6 @@
 package d.swan.vkinfinity;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,7 +39,7 @@ public class SettingsActivity extends Activity implements OnClickListener {
     private Configuration config = new Configuration();
 
     ImageView iwAvatar, iwOnOff, iwLang;
-    TextView tvUser, tvStatus, tvOnline, loginText;
+    TextView tvUser, tvOnline, loginText;
     LinearLayout userLayout, loginLayout, serviceLayout, langLayout, aboutLayout;
 
     private void noNetwork() {
@@ -65,7 +67,6 @@ public class SettingsActivity extends Activity implements OnClickListener {
         userLayout = (LinearLayout) findViewById(R.id.userLayout);
         tvUser = (TextView) findViewById(R.id.tvUser);
         iwAvatar = (ImageView) findViewById(R.id.iwAvatar);
-        tvStatus = (TextView) findViewById(R.id.tvStatus);
         tvOnline = (TextView) findViewById(R.id.tvOnline);
 
         // Определение кнопки входа
@@ -94,6 +95,15 @@ public class SettingsActivity extends Activity implements OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Кастомный Action Bar
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false); //не показываем иконку приложения
+        actionBar.setDisplayShowTitleEnabled(false); // и заголовок тоже прячем
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.action_bar);
+
         // Загрузка параметров
         properties.LoadData(this);
         isEnabled = properties.isEnabled;
@@ -179,7 +189,7 @@ public class SettingsActivity extends Activity implements OnClickListener {
         // проверка наличия Интернета
         if(new Network().check(getApplicationContext())) {
             // подготовка запроса
-            VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "first_name, last_name, online, status, photo_100"));
+            VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "first_name, last_name, online, photo_100"));
             // отправка и обработка результата запроса
             request.executeWithListener(new VKRequest.VKRequestListener() {
                 // Если запрос успешно выполнен
@@ -192,8 +202,6 @@ public class SettingsActivity extends Activity implements OnClickListener {
                     ParseJSON parseJSON = new ParseJSON();
                     tvUser.setText(parseJSON.getInfo(response, "first_name")); // Имя
                     tvUser.append(" " + parseJSON.getInfo(response, "last_name")); // Фамилия
-
-                    tvStatus.setText(parseJSON.getInfo(response, "status")); // Статус
 
                     if (parseJSON.getInfo(response, "online").equals("0"))
                         tvOnline.setText("Offline"); // Если статус offline

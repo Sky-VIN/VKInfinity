@@ -20,11 +20,13 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".Receiver">
+        <receiver android:name=".StartReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".Receiver" />
 
         <activity android:name=".SettingsActivity" android:screenOrientation="nosensor">
             <intent-filter>
