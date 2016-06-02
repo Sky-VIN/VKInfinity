@@ -59,7 +59,6 @@ public class SettingsActivity extends Activity implements OnClickListener {
         // Сохранение параметров
         properties.SaveData(this, isEnabled, Locale.getDefault().toString());
         super.onBackPressed();
-        System.exit(0);
     }
 
     private void Assignment() {

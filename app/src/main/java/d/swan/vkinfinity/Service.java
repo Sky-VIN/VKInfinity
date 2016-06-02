@@ -12,6 +12,10 @@ import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class Service extends android.app.Service  {
@@ -21,7 +25,7 @@ public class Service extends android.app.Service  {
 
     @Override
     public void onCreate() {
-        new Logging().Write("Service created");
+        new Logging().Write(getApplicationContext(), "Service created");
         // Загрузка настроек
         Properties properties = new Properties();
         properties.LoadData(this);
@@ -51,28 +55,27 @@ public class Service extends android.app.Service  {
         pIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         aManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        aManager.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(), 300000, pIntent);
+        aManager.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(), 600000, pIntent);
 
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        new Logging().Write("Service started");
+        new Logging().Write(getApplicationContext(), "Service started");
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        new Logging().Write("Service destroyed");
+        new Logging().Write(getApplicationContext(), "Service destroyed");
         aManager.cancel(pIntent);
         super.onDestroy();
-        System.exit(0);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        new Logging().Write("Service onBind");
+        new Logging().Write(getApplicationContext(), "Service onBind");
         return null;
     }
 }
