@@ -5,18 +5,18 @@ android {
         debug {
             keyAlias 'Sky~VIN'
             keyPassword 'Freedom'
-            storeFile file('/home/daniel/Documents/Projects/VKInfinity/swan.keystore')
+            storeFile file('D:\\Programming\\Projects\\Android\\Keystore\\swan.keystore')
             storePassword '002579'
         }
     }
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "d.swan.vkinfinity"
-        minSdkVersion 11
-        targetSdkVersion 23
+        minSdkVersion 15
+        targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
     }
     buildTypes {
         release {
@@ -29,6 +29,8 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:25.0.1'
     compile project(':vksdk_library')
+    compile 'com.android.support:cardview-v7:25.0.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

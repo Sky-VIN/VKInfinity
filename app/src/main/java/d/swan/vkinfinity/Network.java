@@ -2,15 +2,16 @@ package d.swan.vkinfinity;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 public class Network {
+    private Context context;
 
-    public boolean check(Context context) {
-        ConnectivityManager cManager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
-        if(cManager.getActiveNetworkInfo() == null) {
-            return false;
-        } else
-            return true;
+    Network(Context context) {
+        this.context = context;
+    }
+
+    public boolean check() {
+        ConnectivityManager cManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cManager.getActiveNetworkInfo() != null;
     }
 }

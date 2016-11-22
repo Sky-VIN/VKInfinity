@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="background">#D9D9D9</color>
-    <color name="title">#5183B7</color>
+    <color name="background">#ebedf0</color>
+    <color name="shadow">#bdbfc1</color>
+    <color name="title">#5181B8</color>
     <color name="mainText">#2e3033</color>
     <color name="text">#ABABAB</color>
+    <color name="touch">#E8E8E8</color>
 
 </resources>

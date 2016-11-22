@@ -1,5 +1,4 @@
 <resources>
-    
     <string name="app_name">VK Infinity</string>
     <integer name="com_vk_sdk_AppId">5168206</integer>
 
@@ -11,6 +10,7 @@
     <string name="langText">Язык</string>
 
     <string name="helpText">Помощь</string>
+    <string name="logText">Журнал</string>
     <string name="aboutText">О программе</string>
 
     <string name="loginBtnLogin">АВТОРИЗАЦИЯ</string>
@@ -20,11 +20,12 @@
     <string name="AuthErr">Пользователь не прошел авторизацию</string>
 
     <string name="Connected">VKI: Соединено как&#160;</string>
+    <string name="Disconnected">VKI: Сервис остановлен</string>
 
     <string name="AppWarning">Официальное приложение ВК не установлено. Для корректной работы, необходимо установить его.\nПерейти к странице загрузки?</string>
     <string name="Yes">Да</string>
     <string name="Try">Попробовать</string>
 
+    <string name="logoutMessage">Вы уверены, что хотите выйти?</string>
     <string name="aboutMessage">Программа для удержания статуса онлайн вконтакте, если есть Интернет соединение на вашем устройстве.</string>
-
 </resources>

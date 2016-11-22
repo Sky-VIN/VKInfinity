@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -33,31 +34,45 @@ import java.util.Locale;
 
 public class SettingsActivity extends Activity implements OnClickListener {
 
-    private boolean isEnabled = false;
-    private boolean serviceState = false;
-    private Properties properties = new Properties();
+    private Manager manager;
+    private Network network;
+    private Properties properties;
+    private boolean isServiceEnabled = false;
     private Configuration config = new Configuration();
 
     ImageView iwAvatar, iwOnOff, iwLang;
     TextView tvUser, tvOnline, loginText;
-    LinearLayout userLayout, loginLayout, serviceLayout, langLayout, aboutLayout;
+    LinearLayout userLayout, loginLayout, serviceLayout, langLayout, logLayout, aboutLayout;
 
     private void noNetwork() {
         userLayout.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         Toast.makeText(this, R.string.Network, Toast.LENGTH_SHORT).show();
+        setService(false);
+    }
+
+    private void setService(boolean OnOff) {
+        isServiceEnabled = OnOff;
+        if (OnOff) {
+            manager.start();
+            iwOnOff.setImageResource(R.drawable.switch_on);
+        } else {
+            manager.stop();
+            iwOnOff.setImageResource(R.drawable.switch_off);
+            Toast.makeText(this, R.string.Disconnected, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     protected void onPause() {
         // Сохранение параметров
-        properties.SaveData(this, isEnabled, Locale.getDefault().toString());
+        properties.SaveData(isServiceEnabled, Locale.getDefault().toString());
         super.onPause();
     }
 
     @Override
     public void onBackPressed() {
         // Сохранение параметров
-        properties.SaveData(this, isEnabled, Locale.getDefault().toString());
+        properties.SaveData(isServiceEnabled, Locale.getDefault().toString());
         super.onBackPressed();
     }
 
@@ -71,14 +86,13 @@ public class SettingsActivity extends Activity implements OnClickListener {
         // Определение кнопки входа
         loginLayout = (LinearLayout) findViewById(R.id.loginLayout);
         loginLayout.setOnClickListener(this);
-        loginText = (TextView)findViewById(R.id.loginText);
+        loginText = (TextView) findViewById(R.id.loginText);
 
         // Определения тумблера сервиса
         serviceLayout = (LinearLayout) findViewById(R.id.serviceLayout);
         serviceLayout.setOnClickListener(this);
         iwOnOff = (ImageView) findViewById(R.id.iwOnOff);
-        if(isEnabled)
-            iwOnOff.setImageResource(R.drawable.switch_on);
+        if (isServiceEnabled) iwOnOff.setImageResource(R.drawable.switch_on);
         else iwOnOff.setImageResource(R.drawable.switch_off);
 
         // определение кнопки языка
@@ -86,6 +100,10 @@ public class SettingsActivity extends Activity implements OnClickListener {
         langLayout.setOnClickListener(this);
         iwLang = (ImageView) findViewById(R.id.iwLang);
         iwLang.setImageResource(R.drawable.flag);
+
+        // определение кнопки Log
+        logLayout = (LinearLayout) findViewById(R.id.logLayout);
+        logLayout.setOnClickListener(this);
 
         // определение кнопки About
         aboutLayout = (LinearLayout) findViewById(R.id.aboutLayout);
@@ -95,30 +113,55 @@ public class SettingsActivity extends Activity implements OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        // Кастомный Action Bar
+        setCustomActionBar(); // Кастомный Action Bar
+        loadData(); // Загрузка параметров
+        checkingOfficialApp(); // Проверка установлено ли офф приложение ВК.
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
+
+        manager = new Manager(this);
+        network = new Network(this);
+        Assignment(); // Вынес определения єлементов єкрана в отдельный метод для красоты
+
+        if (VKSdk.isLoggedIn())
+            showLoggedIn();
+        else
+            showLoggedOut();
+    }
+
+    // Кастомный Action Bar
+    private void setCustomActionBar() {
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         ActionBar actionBar = getActionBar();
+        assert actionBar != null;
         actionBar.setDisplayShowHomeEnabled(false); //не показываем иконку приложения
         actionBar.setDisplayShowTitleEnabled(false); // и заголовок тоже прячем
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setCustomView(R.layout.action_bar);
+    }
 
-        // Загрузка параметров
-        properties.LoadData(this);
-        isEnabled = properties.isEnabled;
+    // Загрузка параметров
+    private void loadData() {
+        properties = new Properties(this);
+        properties.LoadData();
+        isServiceEnabled = properties.isEnabled;
         config.locale = new Locale(properties.locale);
         Locale.setDefault(config.locale);
         getResources().updateConfiguration(config, null);
+    }
 
-        // Проверка установлено ли офф приложение ВК.
+    // Проверка установлено ли офф приложение ВК.
+    private void checkingOfficialApp() {
         final String app = "com.vkontakte.android";
         PackageManager pManager = getPackageManager();
         try {
             PackageInfo pInfo = pManager.getPackageInfo(app, 0);
         } catch (PackageManager.NameNotFoundException e) {
             new AlertDialog.Builder(this)
-                    .setTitle("VK Infinity")
+                    .setTitle(R.string.app_name)
                     .setMessage(R.string.AppWarning)
+                    .setCancelable(false)
                     .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -137,40 +180,6 @@ public class SettingsActivity extends Activity implements OnClickListener {
                     })
                     .show();
         }
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-
-        Assignment(); // Вынес определения єлементов єкрана в отдельный метод для красоты
-
-        VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
-            @Override
-            public void onResult(VKSdk.LoginState res) {
-                switch (res) {
-                    //Если вход не был выполнен
-                    case LoggedOut:
-                        showLoggedOut();
-                        break;
-                    // Если вход был выполнен
-                    case LoggedIn:
-                        showLoggedIn();
-                        break;
-                    case Unknown:
-                        VKSdk.logout();
-                        showLoggedOut();
-                        break;
-                    case Pending:
-                        // nothing
-                        break;
-                }
-            }
-
-            @Override
-            public void onError(VKError error) {
-                // nothing
-            }
-        });
-
     }
 
     // Если вход был выполнен
@@ -178,58 +187,57 @@ public class SettingsActivity extends Activity implements OnClickListener {
         // Смена кнопки
         loginText.setText(R.string.loginBtnLogout);
 
-        // проверка и запуск сервиса
-        if(isEnabled && !serviceState) {
-            startService(new Intent("d.swan.vkinfinity.Service"));
-            serviceState = true;
-            iwOnOff.setImageResource(R.drawable.switch_on);
-        }
+        // проверка на запуск сервиса
+        if (isServiceEnabled) setService(true);
 
         // проверка наличия Интернета
-        if(new Network().check(getApplicationContext())) {
-            // подготовка запроса
-            VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "first_name, last_name, online, photo_100"));
-            // отправка и обработка результата запроса
-            request.executeWithListener(new VKRequest.VKRequestListener() {
-                // Если запрос успешно выполнен
-                @Override
-                public void onComplete(VKResponse response) {
-                    super.onComplete(response);
-
-                    // Присваивание значений полям пользователя:
-                    // Метод распарсинга результата запроса
-                    ParseJSON parseJSON = new ParseJSON();
-                    tvUser.setText(parseJSON.getInfo(response, "first_name")); // Имя
-                    tvUser.append(" " + parseJSON.getInfo(response, "last_name")); // Фамилия
-
-                    if (parseJSON.getInfo(response, "online").equals("0"))
-                        tvOnline.setText("Offline"); // Если статус offline
-                    else
-                        tvOnline.setText("Online"); // Если статус online
-
-                    // Скачивание и установка аватара
-                    new ImageFromURL(iwAvatar).execute(parseJSON.getInfo(response, "photo_100"));
-
-                    // Установка параметров Layout с данными пользователя
-                    userLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                }
-            });
+        if (network.check()) {
+            loadUserData();
+            userLayout.setLayoutParams(
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT)
+            );
         } else
             noNetwork();
     }
 
     // Если вход не был выполнен
     private void showLoggedOut() {
-        userLayout.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         loginText.setText(R.string.loginBtnLogin);
+        setService(false);
+        userLayout.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+    }
 
-        isEnabled = false;
-        iwOnOff.setImageResource(R.drawable.switch_off);
+    private void loadUserData() {
+        // подготовка запроса
+        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "first_name, last_name, online, photo_100"));
+        // отправка и обработка результата запроса
+        request.executeWithListener(new VKRequest.VKRequestListener() {
+            // Если запрос успешно выполнен
+            @Override
+            public void onComplete(VKResponse response) {
 
-        if(serviceState) {
-            stopService(new Intent("d.swan.vkinfinity.Service"));
-            serviceState = false;
-        }
+                JSON json = new JSON();
+                tvUser.setText("");
+                tvUser.append(json.getInfo(response, "first_name")); // Имя
+                tvUser.append(" ");
+                tvUser.append(json.getInfo(response, "last_name")); // Фамилия
+
+                // Статус
+                tvOnline.setText("");
+                if (json.getInfo(response, "online").equals("0"))
+                    tvOnline.append("offline"); // Если статус offline
+                else
+                    tvOnline.append("online"); // Если статус online
+
+                // Аватар
+                Uri uri = Uri.parse(json.getInfo(response, "photo_100"));
+                Picasso.with(getApplicationContext())
+                        .load(uri)
+                        .into(iwAvatar);
+            }
+        });
     }
 
     // обработка кнопок
@@ -239,42 +247,80 @@ public class SettingsActivity extends Activity implements OnClickListener {
 
             // кнопка входа
             case R.id.loginLayout:
-                if (new Network().check(this)) {
+
+                // Проверка Интернета
+                if (network.check()) {
+                    // Авторизирован ли пользователь
                     if (VKSdk.isLoggedIn()) {
-                        VKSdk.logout();
-                        showLoggedOut();
+                        logoutDialog();
                     } else
                         VKSdk.login(this, null);
-                } else
-                    noNetwork();
+                }
+                // Если нет Интернета
+                else noNetwork();
                 break;
 
             // кнопка сервиса
             case R.id.serviceLayout:
-                if (!isEnabled) {
-                    if(VKSdk.isLoggedIn()) {
-                        isEnabled = true;
-                        iwOnOff.setImageResource(R.drawable.switch_on);
+
+                if (!isServiceEnabled)
+                    if (VKSdk.isLoggedIn()) {
+                        isServiceEnabled = true;
                         showLoggedIn();
-                    }
-                    else
+                    } else
                         showLoggedOut();
-                }
-                else {
-                    isEnabled = false;
-                    iwOnOff.setImageResource(R.drawable.switch_off);
-                    if(serviceState) {
-                        stopService(new Intent("d.swan.vkinfinity.Service"));
-                        serviceState = false;
-                    }
-                }
+                else
+                    setService(false);
+
                 break;
 
             // Выбор языка
             case R.id.langLayout:
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.languages));
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.langText)
+                languageDialog();
+                break;
+
+            // кнопка Log
+            case R.id.logLayout:
+                startActivity(new Intent(this, LogActivity.class));
+                break;
+
+            // вызов окна about
+            case R.id.aboutLayout:
+                aboutDialog();
+                break;
+        }
+    }
+
+    private void logoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.logoutMessage)
+                .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        VKSdk.logout();
+                        showLoggedOut();
+                    }
+                })
+                .setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    private void languageDialog() {
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_list_item_1,
+                        getResources().getStringArray(R.array.languages)
+                );
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.langText)
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -290,33 +336,30 @@ public class SettingsActivity extends Activity implements OnClickListener {
                                 break;
                         }
                         Locale.setDefault(config.locale);
-                        properties.SaveData(getApplicationContext(), isEnabled, Locale.getDefault().toString());
+                        properties.SaveData(isServiceEnabled, Locale.getDefault().toString());
                         SettingsActivity.super.recreate();
                     }
                 })
-                        .setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-                break;
+                .setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
 
-            // вызов окна about
-            case R.id.aboutLayout:
-                new AlertDialog.Builder(this)
-                        .setTitle("VK Infinity")
-                        .setMessage(R.string.aboutMessage)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-                break;
-        }
+    private void aboutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("VK Infinity")
+                .setMessage(R.string.aboutMessage)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     // Обработка результата попытки входа
@@ -325,14 +368,14 @@ public class SettingsActivity extends Activity implements OnClickListener {
         VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                isEnabled = true;
+                isServiceEnabled = true;
                 showLoggedIn();
             }
 
             @Override
             public void onError(VKError error) {
-                // User didn't pass Authorization
                 Toast.makeText(getApplicationContext(), R.string.AuthErr, Toast.LENGTH_SHORT).show();
+                showLoggedOut();
             }
         };
 
@@ -340,4 +383,5 @@ public class SettingsActivity extends Activity implements OnClickListener {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
 }

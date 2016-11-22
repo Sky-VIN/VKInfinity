@@ -10,29 +10,27 @@ import com.vk.sdk.api.VKResponse;
 
 public class Receiver extends BroadcastReceiver {
 
+    private Logging logging = new Logging();
+
     @Override
     public void onReceive(final Context context, Intent intent) {
-
-        if(new Network().check(context)) {
+        if (new Network(context).check()) {
             VKRequest request = new VKRequest("account.setOnline");
             request.executeWithListener(new VKRequest.VKRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
-                    super.onComplete(response);
-
                     if (response.json.toString().equals("{\"response\":1}"))
-                        new Logging().Write(context, "Online");
+                        logging.Write("Online");
                     else
-                        new Logging().Write(context, response.json.toString());
+                        logging.Write(response.json.toString());
                 }
 
                 @Override
                 public void onError(VKError error) {
-                    super.onError(error);
-                    new Logging().Write(context, error.toString());
+                    logging.Write(error.errorMessage);
                 }
             });
         } else
-            new Logging().Write(context, "No Internet connection!");
+            logging.Write("No Internet connection!");
     }
 }

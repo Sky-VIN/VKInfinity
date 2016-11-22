@@ -1,5 +1,4 @@
 <resources>
-    
     <string name="app_name">VK Infinity</string>
     <integer name="com_vk_sdk_AppId">5168206</integer>
 
@@ -11,6 +10,7 @@
     <string name="langText">Language</string>
 
     <string name="helpText">Help</string>
+    <string name="logText">Log</string>
     <string name="aboutText">About</string>
 
     <string name="loginBtnLogin">LOG IN</string>
@@ -20,10 +20,12 @@
     <string name="AuthErr">User didn\'t pass Authorization</string>
 
     <string name="Connected">VKI: Connected as&#160;</string>
+    <string name="Disconnected">VKI: Service stopped</string>
 
     <string name="AppWarning">Official VK application is not installed. For correct work, you need to install it.\nGo to the download page?</string>
     <string name="Yes">Yes</string>
     <string name="Try">Try</string>
 
+    <string name="logoutMessage">Are you sure want logout?</string>
     <string name="aboutMessage">The program is to maintain the status vkontakte online, if there is an Internet connection on your device.</string>
 </resources>
