@@ -21,30 +21,30 @@ class Manager {
     private AlarmManager aManager;
     private PendingIntent pIntent;
     private Logging logging = new Logging();
+    private final static int id = 2579;
 
     Manager(Context context) {
         this.context = context;
+        Intent intent = new Intent(context, Receiver.class);
+        pIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        aManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
     }
 
     void start() {
         logging.Write("Service started");
 
-        // Загрузка настроек
         Properties properties = new Properties(context);
         properties.LoadData();
-
-        // Установка языка
+        int schedule = properties.schedule;
         Configuration config = new Configuration();
         config.locale = new Locale(properties.locale);
         Locale.setDefault(config.locale);
         context.getResources().updateConfiguration(config, null);
 
-        // Отправка запроса на выявления пользователя
         VKRequest request = VKApi.users().get();
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
-                // Заполнение данных пользователя
                 JSON json = new JSON();
                 String info;
                 info = json.getInfo(response, "first_name");
@@ -54,19 +54,16 @@ class Manager {
             }
         });
 
-        Intent intent = new Intent(context, Receiver.class);
-        pIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        aManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        aManager.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(), 600000, pIntent);
+        aManager.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(), 1000 * 60 * schedule, pIntent);
     }
 
     void stop() {
         try {
             aManager.cancel(pIntent);
             logging.Write("Service stopped");
+            Toast.makeText(context, R.string.Disconnected, Toast.LENGTH_SHORT).show();
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            logging.Write(e.getMessage());
         }
     }
 }

@@ -2,8 +2,12 @@ package d.swan.vkinfinity;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.Window;
+import android.os.Environment;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,25 +17,20 @@ import java.io.IOException;
 
 public class LogActivity extends Activity {
 
+    TextView tvLog;
+    private File logFile = new File(Environment.getExternalStorageDirectory().getPath() + "/VKI.log");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        // Кастомный Action Bar
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        ActionBar actionBar = getActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayShowHomeEnabled(false); //не показываем иконку приложения
-        actionBar.setDisplayShowTitleEnabled(false); // и заголовок тоже прячем
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setCustomView(R.layout.action_bar);
+        setCustomActionBar(); // Кастомный Action Bar
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log);
 
-        TextView tvLog = (TextView) findViewById(R.id.tvLog);
+        tvLog = (TextView) findViewById(R.id.tvLog);
         tvLog.setText("");
 
-        File logFile = new File("/sdcard/VKI.log");
         if (logFile.exists()) {
             try {
                 FileReader reader = new FileReader(logFile);
@@ -42,5 +41,46 @@ public class LogActivity extends Activity {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         } else tvLog.append("(Empty)");
+    }
+
+
+    private void setCustomActionBar() {
+        ActionBar actionBar = getActionBar();
+        assert actionBar != null;
+        actionBar.setDisplayShowHomeEnabled(false); //не показываем иконку приложения
+        actionBar.setDisplayShowTitleEnabled(false); // и заголовок тоже прячем
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setCustomView(R.layout.action_bar);
+
+        TextView title = (TextView) findViewById(R.id.tvTitle);
+        title.setText("Infinity :: " + getResources().getString(R.string.logText));
+
+        Button clearButton = (Button) findViewById(R.id.actionButton);
+        clearButton.setBackground(getResources().getDrawable(R.drawable.ic_delete));
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(LogActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.clearHistory)
+                        .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (logFile.exists()) {
+                                    logFile.delete();
+                                    tvLog.setText("(Empty)");
+                                }
+                            }
+                        })
+                        .setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
     }
 }

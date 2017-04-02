@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vk_name">VK</string>
+    <string name="vk_enter_captcha_text">Введіть текст з малюнку</string>
+    <string name="vk_new_message_text">Введіть текст повідомлення..</string>
+    <string name="vk_new_post_settings">Налаштування запису</string>
+    <string name="vk_retry">Повторити</string>
+    <string name="vk_send">ВІДПРАВИТИ</string>
+    <string name="vk_share">Поділитися</string>
+</resources>

@@ -2,19 +2,26 @@
     <string name="app_name">VK Infinity</string>
     <integer name="com_vk_sdk_AppId">5168206</integer>
 
+    <string name="online">В мережі</string>
+    <string name="offline">Відсутній</string>
+
     <drawable name="flag">@drawable/ua</drawable>
     <string name="Cancel">Відміна</string>
 
     <string name="settingsText">Налаштування</string>
+
     <string name="serviceText">Сервіс</string>
     <string name="langText">Мова</string>
+
+    <string name="scheduleText">Розклад</string>
+    <string name="scheduleUnit">хв</string>
+    <string name="scheduleWarning">Рекомендовано від 5 до 15 хвилин</string>
 
     <string name="helpText">Допомога</string>
     <string name="logText">Журнал</string>
     <string name="aboutText">Про програму</string>
 
-    <string name="loginBtnLogin">АВТОРИЗАЦІЯ</string>
-    <string name="loginBtnLogout">ВИЙТИ</string>
+    <string name="logoutButton">ВИЙТИ</string>
 
     <string name="Network">Відсутнє Інтернет з\'єднання</string>
     <string name="AuthErr">Користувач не пройшов авторизацію</string>
@@ -22,10 +29,13 @@
     <string name="Connected">VKI: З\'єднано як&#160;</string>
     <string name="Disconnected">VKI: Сервіс зупинено</string>
 
-    <string name="AppWarning">Офіційна програма ВК не встановлена. Для коректної роботи, необхідно встановити її.\nПерейті до сторінки завантаження?</string>
     <string name="Yes">Так</string>
     <string name="Try">Спробувати</string>
 
     <string name="logoutMessage">Ви впевнені, що хочете вийти?</string>
     <string name="aboutMessage">Програма для підтримки статусу онлайн вконтакте, якщо є Інтернет з\'єднання на вашому пристрої.</string>
+
+    <string name="refreshText">Оновлено</string>
+
+    <string name="clearHistory">Очистити історію?</string>
 </resources>
