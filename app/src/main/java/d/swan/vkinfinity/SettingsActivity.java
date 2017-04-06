@@ -9,10 +9,11 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,7 +37,6 @@ import java.util.Locale;
 public class SettingsActivity extends Activity implements OnClickListener {
 
     private int schedule;
-    private Manager manager;
     private Network network;
     private Properties properties;
     private boolean isServiceEnabled;
@@ -53,11 +53,12 @@ public class SettingsActivity extends Activity implements OnClickListener {
     }
 
     private void setService(boolean OnOff) {
-        if (OnOff) {
-            manager.start();
+        isServiceEnabled = OnOff;
+        if (isServiceEnabled) {
+            new Manager(this).start();
             iwServiceOnOff.setImageResource(R.drawable.switch_on);
         } else {
-            manager.stop();
+            new Manager(this).stop();
             iwServiceOnOff.setImageResource(R.drawable.switch_off);
         }
     }
@@ -125,7 +126,6 @@ public class SettingsActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        manager = new Manager(this);
         network = new Network(this);
 
         Assignment(); // Вынес определения єлементов єкрана в отдельный метод для красоты
@@ -134,7 +134,7 @@ public class SettingsActivity extends Activity implements OnClickListener {
             showLoggedIn();
         } else {
             mainScrollView.setVisibility(View.INVISIBLE);
-            VKSdk.login(this, null);
+            VKSdk.login(this, "");
         }
     }
 
@@ -150,16 +150,24 @@ public class SettingsActivity extends Activity implements OnClickListener {
 
         TextView title = (TextView) findViewById(R.id.tvTitle);
         title.setText("Infinity");
+    }
 
-        Button refreshButton = (Button) findViewById(R.id.actionButton);
-        refreshButton.setBackground(getResources().getDrawable(R.drawable.ic_refresh));
-        refreshButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refreshButton:
+                new Receiver().onReceive(SettingsActivity.this, getIntent());
                 loadUserData();
                 Toast.makeText(getApplicationContext(), R.string.refreshText, Toast.LENGTH_SHORT).show();
-            }
-        });
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void loadData() {
@@ -224,12 +232,10 @@ public class SettingsActivity extends Activity implements OnClickListener {
             // кнопка сервиса
             case R.id.serviceLayout:
                 if (!isServiceEnabled) {
-                    isServiceEnabled = true;
-                    setService(isServiceEnabled);
+                    setService(true);
                     showLoggedIn();
                 } else {
-                    isServiceEnabled = false;
-                    setService(isServiceEnabled);
+                    setService(false);
                 }
                 break;
 
@@ -262,8 +268,7 @@ public class SettingsActivity extends Activity implements OnClickListener {
                 .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
-                        isServiceEnabled = false;
-                        setService(isServiceEnabled);
+                        setService(false);
                         VKSdk.logout();
                         SettingsActivity.super.recreate();
                     }

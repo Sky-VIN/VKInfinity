@@ -13,7 +13,7 @@ public class Receiver extends BroadcastReceiver {
     private Logging logging = new Logging();
 
     @Override
-    public void onReceive(final Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         if (new Network(context).check()) {
             VKRequest request = new VKRequest("account.setOnline");
             request.executeWithListener(new VKRequest.VKRequestListener() {

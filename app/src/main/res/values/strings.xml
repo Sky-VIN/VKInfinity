@@ -37,5 +37,8 @@
 
     <string name="refreshText">Refreshed</string>
 
+    <string name="refreshButton">Refresh</string>
+    <string name="clearButton">Clear</string>
+
     <string name="clearHistory">Clear history?</string>
 </resources>

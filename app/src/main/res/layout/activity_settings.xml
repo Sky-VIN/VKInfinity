@@ -10,7 +10,8 @@
     <ScrollView
         android:id="@+id/mainScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -150,8 +151,8 @@
 
                         <ImageView
                             android:id="@+id/serviceImage"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:layout_marginBottom="15dp"
                             android:layout_marginLeft="25dp"
@@ -189,8 +190,8 @@
 
                         <ImageView
                             android:id="@+id/languageImage"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:layout_marginBottom="15dp"
                             android:layout_marginLeft="25dp"
@@ -230,8 +231,8 @@
 
                         <ImageView
                             android:id="@+id/refreshImage"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:layout_marginBottom="15dp"
                             android:layout_marginLeft="25dp"
@@ -268,7 +269,7 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:layout_marginTop="10dp"
                 app:cardBackgroundColor="@color/background"
                 app:cardPreventCornerOverlap="false">
@@ -300,8 +301,8 @@
 
                         <ImageView
                             android:id="@+id/logImage"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:layout_marginBottom="15dp"
                             android:layout_marginLeft="25dp"
@@ -330,8 +331,8 @@
 
                         <ImageView
                             android:id="@+id/aboutImage"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:layout_marginBottom="15dp"
                             android:layout_marginLeft="25dp"

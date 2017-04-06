@@ -4,5 +4,7 @@
         <item name="android:actionButtonStyle">@style/VKI</item>
     </style>
 
-    <style name="VKI" parent="android:Widget.ActionButton" />
+    <style name="VKI" parent="android:Widget.ActionButton">
+        <item name="android:background">@color/vk_color</item>
+    </style>
 </resources>

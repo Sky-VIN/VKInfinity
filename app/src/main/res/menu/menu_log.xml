@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/refreshLogButton"
+        android:icon="@mipmap/ic_refresh"
+        android:showAsAction="ifRoom"
+        android:title="@string/refreshButton" />
+    <item
+        android:id="@+id/clearLogButton"
+        android:icon="@mipmap/ic_delete"
+        android:showAsAction="ifRoom"
+        android:title="@string/clearButton" />
+</menu>

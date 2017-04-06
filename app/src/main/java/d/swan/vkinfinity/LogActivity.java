@@ -4,10 +4,12 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.View;
-import android.widget.Button;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +31,12 @@ public class LogActivity extends Activity {
         setContentView(R.layout.activity_log);
 
         tvLog = (TextView) findViewById(R.id.tvLog);
-        tvLog.setText("");
 
+        fillHistory();
+    }
+
+    private void fillHistory() {
+        tvLog.setText("");
         if (logFile.exists()) {
             try {
                 FileReader reader = new FileReader(logFile);
@@ -40,7 +46,15 @@ public class LogActivity extends Activity {
             } catch (IOException e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        } else tvLog.append("(Empty)");
+            tvLog.setTypeface(Typeface.DEFAULT);
+            tvLog.setTextColor(getResources().getColor(R.color.mainText));
+            tvLog.setGravity(Gravity.NO_GRAVITY);
+        } else {
+            tvLog.append("\n(Empty)\n");
+            tvLog.setTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
+            tvLog.setTextColor(getResources().getColor(R.color.shadow));
+            tvLog.setGravity(Gravity.CENTER);
+        }
     }
 
 
@@ -55,12 +69,22 @@ public class LogActivity extends Activity {
 
         TextView title = (TextView) findViewById(R.id.tvTitle);
         title.setText("Infinity :: " + getResources().getString(R.string.logText));
+    }
 
-        Button clearButton = (Button) findViewById(R.id.actionButton);
-        clearButton.setBackground(getResources().getDrawable(R.drawable.ic_delete));
-        clearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_log, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refreshLogButton:
+                fillHistory();
+                Toast.makeText(this, R.string.refreshText, Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.clearLogButton:
                 new AlertDialog.Builder(LogActivity.this)
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.clearHistory)
@@ -69,18 +93,19 @@ public class LogActivity extends Activity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 if (logFile.exists()) {
                                     logFile.delete();
-                                    tvLog.setText("(Empty)");
+                                    fillHistory();
                                 }
                             }
                         })
                         .setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
+                            public void onClick(DialogInterface dialog, int i) {
+                                dialog.dismiss();
                             }
                         })
                         .show();
-            }
-        });
+                break;
+        }
+        return true;
     }
 }

@@ -37,5 +37,8 @@
 
     <string name="refreshText">Оновлено</string>
 
+    <string name="refreshButton">Оновити</string>
+    <string name="clearButton">Очистити</string>
+
     <string name="clearHistory">Очистити історію?</string>
 </resources>
